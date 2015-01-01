@@ -142,8 +142,28 @@ class eZRedisDB extends eZDBInterface
         $connection = ($server == eZDBInterface::SERVER_SLAVE) ? $this->DBConnection : $this->DBWriteConnection;
 
         $connection->select($selectDatabase);
-        $result = call_user_func_array(array($connection, $phpMethod), array($query));
+        $result = static::buildRedisCommand($connection, $phpMethod, $query);
         return $result;
+    }
+
+    /**
+     * Build the Redis unified protocol command
+     * @param  Redis                    &$connection [description]
+     * @param  string                   $phpMethod   [description]
+     * @param  string                   $query       [description]
+     * @date   2015-01-01T20:41:51+0100
+     */
+    public static function buildRedisCommand(Redis &$connection, $phpMethod, $query)
+    {
+        $redisIni = eZINI::instance('redis.ini');
+        if ($redisIni->hasVariable('PHPRedisSettings', 'PhpRedisMethod')) {
+            $phpMethods = $redisIni->variable('PHPRedisSettings', 'PhpRedisMethod');
+            if (isset($phpMethods[$phpMethod])) {
+                $phpMethod = $phpMethods[$phpMethod];
+            }
+        }
+        
+        return call_user_func_array(array($connection, $phpMethod), array($query));
     }
 
     public function arrayQuery($sql, $params = array(), $server = false)
