@@ -309,4 +309,18 @@ class eZRedisDB extends eZDBInterface
         }
         return true;
     }
+
+    /**
+     * Allow to use redis socket directly
+     * @return Redis
+     * @date   2015-01-05T14:49:54+0100
+     * @example:
+     *    $db = eZNoSqlDB::instance();
+     *    $redis = $db->useRedis();
+     *    $redis->set("key", "value", array("xx", "ex" => 100));
+     */
+    public function useRedis()
+    {
+        return $this->DBWriteConnection;
+    }
 }
