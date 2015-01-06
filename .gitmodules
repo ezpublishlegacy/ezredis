@@ -1,0 +1,6 @@
+[submodule "lib/redisent"]
+	path = lib/redisent
+	url = https://github.com/jdp/redisent.git
+[submodule "lib/predis"]
+	path = lib/predis
+	url = https://github.com/nrk/predis.git

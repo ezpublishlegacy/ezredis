@@ -11,7 +11,7 @@ $db->selectDatabase(1);
 // Simple key -> value set
 $db->query('set voiture6 maison4 ex 100 xx');
 
-// Simple key -> value set
+// Simple key -> value get
 $db = eZNoSqlDB::instance();
 $db->selectDatabase(1);
 $result = $db->arrayQuery('get voiture6');
