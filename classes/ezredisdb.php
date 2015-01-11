@@ -7,7 +7,11 @@
 class eZRedisDB extends eZDBInterface
 {
     public $timeout = 1;
-    public $delayConnexion = 0.01;
+    /**
+     * 100ms delay between reconnection attempts.
+     * @var integer
+     */
+    public $delayConnexion = 100;
 
     public function version()
     {
@@ -174,14 +178,19 @@ class eZRedisDB extends eZDBInterface
         if ($redisIni->hasVariable('DatabaseSettings', 'RedisQueryHandler')) {
             $handlerClass = $redisIni->variable('DatabaseSettings', 'RedisQueryHandler');
         }
-        if (method_exists($handlerClass."QueryHandler", $phpMethod)) {
-            return call_user_func_array(array($handlerClass."QueryHandler", $phpMethod), array($connection, $query));
-        } else {
-            if (!$query) {
-                return $connection->{$phpMethod}();
+        try {
+            if (method_exists($handlerClass."QueryHandler", $phpMethod)) {
+                return call_user_func_array(array($handlerClass."QueryHandler", $phpMethod), array($connection, $query));
             } else {
-                return call_user_func_array(array($connection, $phpMethod), explode(' ', $query));
+                if (!$query) {
+                    return $connection->{$phpMethod}();
+                } else {
+                    return call_user_func_array(array($connection, $phpMethod), explode(' ', $query));
+                }
             }
+        } catch (Exception $e) {
+            eZDebug::writeError(" Redis::$phpMethod(): " .$e->getMessage(), __METHOD__);
+            return false;
         }
     }
 
@@ -202,7 +211,7 @@ class eZRedisDB extends eZDBInterface
         return $result;
     }
 
-   /**
+    /**
     * The query to start the transaction.
     *
     * @return bool
