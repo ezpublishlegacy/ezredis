@@ -679,4 +679,107 @@ class phpRedisQueryHandler
         }
         return $connection->zscan($key, $parameters['query'], $parameters['match'], $parameters['count']);
     }
+
+    /**
+     * Get or Set the Redis server configuration parameters.
+     * @param  Redis                    &$connection [description]
+     * @param  [type]                   $query       [description]
+     * @return array                                 a result
+     * @date   2015-01-21T22:36:28+0100
+     * the following can be set :
+     *     activerehashing
+     *     allkeys-lru
+     *     allkeys-random
+     *     aof-load-truncated
+     *     aof-rewrite-incremental-fsync
+     *     appendfilename
+     *     appendfsync
+     *     appendonly
+     *     auto-aof-rewrite-min-size
+     *     auto-aof-rewrite-percentage
+     *     bind
+     *     client-output-buffer-limit
+     *     daemonize
+     *     databases
+     *     dbfilename
+     *     dir
+     *     hash-max-ziplist-entries
+     *     hash-max-ziplist-value
+     *     hll-sparse-max-bytes
+     *     hz
+     *     latency-monitor-threshold
+     *     list-max-ziplist-entries
+     *     list-max-ziplist-value
+     *     logfile
+     *     loglevel
+     *     lua-time-limit
+     *     masterauth
+     *     maxclients
+     *     maxmemory
+     *     maxmemory-policy
+     *     maxmemory-samples
+     *     min-slaves-max-lag
+     *     min-slaves-to-write
+     *     no-appendfsync-on-rewrite
+     *     noeviction
+     *     notice
+     *     notify-keyspace-events
+     *     pidfile
+     *     port
+     *     rdbchecksum
+     *     rdbcompression
+     *     rename-command
+     *     repl-backlog-size
+     *     repl-backlog-ttl
+     *     repl-disable-tcp-nodelay
+     *     repl-diskless-sync
+     *     repl-diskless-sync-delay
+     *     repl-ping-slave-period
+     *     repl-timeout
+     *     requirepass
+     *     save
+     *     set-max-intset-entries
+     *     slave-priority
+     *     slave-read-only
+     *     slave-serve-stale-data
+     *     slaveof
+     *     slowlog-log-slower-than
+     *     slowlog-max-len
+     *     stop-writes-on-bgsave-error
+     *     syslog-enabled
+     *     syslog-facility
+     *     syslog-ident
+     *     tcp-backlog
+     *     tcp-keepalive
+     *     timeout
+     *     unixsocket
+     *     unixsocketperm
+     *     volatile-lru
+     *     volatile-random
+     *     volatile-ttl
+     *     watchdog-period
+     *     zset-max-ziplist-entries
+     *     zset-max-ziplist-value
+     */
+    public static function config(Redis &$connection, $query)
+    {
+        $args = ArrayTools::explodeStringInArray($query);
+        switch (strtolower($args[0])) {
+            case 'get':
+                return $connection->config($args[0], $args[1]);
+                break;
+            case 'set':
+                return $connection->config($args[0], $args[1], $args[2]);
+                break;
+            case 'resetstat':
+                return $connection->resetStat();
+                break;
+            case 'rewrite':
+                return $connection->config($args[0]);
+                break;
+            default:
+                return false;
+                break;
+        }
+    }
 }
