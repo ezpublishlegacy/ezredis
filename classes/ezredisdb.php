@@ -182,7 +182,7 @@ class eZRedisDB extends eZDBInterface
             if (method_exists($handlerClass."QueryHandler", $phpMethod)) {
                 return call_user_func_array(array($handlerClass."QueryHandler", $phpMethod), array($connection, $query));
             } else {
-                if (!$query) {
+                if ($query === false || $query === "") {
                     return $connection->{$phpMethod}();
                 } else {
                     return call_user_func_array(array($connection, $phpMethod), explode(' ', $query));
@@ -331,5 +331,13 @@ class eZRedisDB extends eZDBInterface
     public function useRedis()
     {
         return $this->DBWriteConnection;
+    }
+
+    public function isConnected()
+    {
+        if ($this->query('ping') == "+PONG") {
+            return true;
+        }
+        return false;
     }
 }
