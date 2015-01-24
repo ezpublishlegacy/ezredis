@@ -27,7 +27,9 @@ class ArrayTools
             if (empty($value)) {
                 continue;
             }
-            if (preg_match('/"/', $value)) {
+            if (preg_match('/"([^"]+)"/', $value)) {
+                $args[] = str_replace('"', '', trim($value));
+            } elseif (preg_match('/"/', $value)) {
                 $stringConcat .= $value. " ";
                 if ($doubleQuote) {
                     $args[]       = str_replace('"', '', trim($stringConcat));
