@@ -26,7 +26,20 @@ class phpRedisQueryHandler
     public static function set(Redis &$connection, $query)
     {
         $start_time = microtime(true);
-        $args = explode(" ", $query);
+        $matches = array();
+        if (preg_match("/\"(.+)\"/", $query, $matches)) {
+            $subQuery = explode($matches[0], $query);
+            $args = array();
+            $args[0] = trim($subQuery[0]);
+            $args[1] = $matches[1];
+            if (!empty($subQuery[1])) {
+                $resultInt = explode(" ", $subQuery[1]);
+                $args = array_merge($args, $resultInt);
+            }
+        } else {
+            $args = ArrayTools::explodeStringInArray($query);
+        }
+
         $additionnalParams = array();
         if (isset($args[2]) && is_numeric($args[2])) {
             static::setex($connection, $args[0].' '.$args[2].' '.$args[1]);
@@ -62,7 +75,7 @@ class phpRedisQueryHandler
      */
     public static function setex(Redis &$connection, $query)
     {
-        $args = explode(" ", $query);
+        $args = ArrayTools::explodeStringInArray($query);
         return $connection->setex($args[0], $args[1], $args[2]);
     }
 
@@ -78,7 +91,7 @@ class phpRedisQueryHandler
      */
     public static function psetex(Redis &$connection, $query)
     {
-        $args = explode(" ", $query);
+        $args = ArrayTools::explodeStringInArray($query);
         return $connection->psetex($args[0], $args[1], $args[2]);
     }
 
@@ -92,7 +105,7 @@ class phpRedisQueryHandler
      */
     public static function mget(Redis &$connection, $query)
     {
-        $args = explode(" ", $query);
+        $args = ArrayTools::explodeStringInArray($query);
         return $connection->mget($args);
     }
 
@@ -121,7 +134,7 @@ class phpRedisQueryHandler
      */
     public static function scan(Redis &$connection, $query)
     {
-        $args = explode(" ", $query);
+        $args = ArrayTools::explodeStringInArray($query);
         $parameters = array(
             "query" => null,
             "match" => false,
@@ -147,7 +160,7 @@ class phpRedisQueryHandler
      */
     public static function sort(Redis &$connection, $query)
     {
-        $args = explode(" ", $query);
+        $args = ArrayTools::explodeStringInArray($query);
         $options = array();
         foreach ($args as $ind => $parameter) {
             switch (strtolower($parameter)) {
@@ -205,11 +218,16 @@ class phpRedisQueryHandler
      * @param  Redis                    &$connection [description]
      * @param  [type]                   $query       [description]
      * @return boolean                                *Bool* `TRUE` in case of success, `FALSE` in case of failure.
-     * @date   2015-01-09T09:29:29+0100
+     * @date   2015-01-24T00:43:33+0100
      */
     public static function mset(Redis &$connection, $query)
     {
-        $args = explode(" ", $query);
+        $args     = array();
+        if (preg_match('/"([^"]+)"/', $query)) {
+            $args = ArrayTools::explodeComplexStringInArray($query);
+        } else {
+            $args = ArrayTools::explodeStringInArray($query);
+        }
         if ((count($args) % 2) !== 0) {
             throw new Exception("you must have a key for a value");
         }
@@ -226,11 +244,16 @@ class phpRedisQueryHandler
      * @param  Redis                    &$connection [description]
      * @param  [type]                   $query       [description]
      * @return boolean                                *Bool* `TRUE` in case of success, `FALSE` in case of failure.
-     * @date   2015-01-09T22:28:06+0100
+     * @date   2015-01-24T00:43:33+0100
      */
     public static function msetnx(Redis &$connection, $query)
     {
-        $args = explode(" ", $query);
+        $args     = array();
+        if (preg_match('/"([^"]+)"/', $query)) {
+            $args = ArrayTools::explodeComplexStringInArray($query);
+        } else {
+            $args = ArrayTools::explodeStringInArray($query);
+        }
         if ((count($args) % 2) !== 0) {
             throw new Exception("you must have a key for a value");
         }
@@ -324,7 +347,7 @@ class phpRedisQueryHandler
      */
     public static function hscan(Redis &$connection, $query)
     {
-        $args = explode(" ", $query);
+        $args = ArrayTools::explodeStringInArray($query);
         $parameters = array(
             "query" => null,
             "match" => false,
@@ -350,7 +373,7 @@ class phpRedisQueryHandler
      */
     public static function linsert(Redis &$connection, $query)
     {
-        $args = explode(" ", $query);
+        $args = ArrayTools::explodeStringInArray($query);
         if (count($args) != 4) {
             throw new Exception("Need 4 parameters");
         }
@@ -396,7 +419,7 @@ class phpRedisQueryHandler
      */
     public static function sscan(Redis &$connection, $query)
     {
-        $args = explode(" ", $query);
+        $args = ArrayTools::explodeStringInArray($query);
         $parameters = array(
             "query" => null,
             "match" => false,
@@ -424,7 +447,7 @@ class phpRedisQueryHandler
      */
     public static function zinter(Redis &$connection, $query)
     {
-        $args = explode(" ", $query);
+        $args = ArrayTools::explodeStringInArray($query);
         $destination = array_shift($args);
         $parameters = array(
             "keys" => array(),
@@ -485,7 +508,7 @@ class phpRedisQueryHandler
      */
     public static function zrange(Redis &$connection, $query)
     {
-        $args = explode(" ", $query);
+        $args = ArrayTools::explodeStringInArray($query);
         $withscores = false;
         if (isset($args[3]) && ("withscores" == strtolower($args[3]))) {
             $withscores = true;
@@ -505,7 +528,7 @@ class phpRedisQueryHandler
      */
     public static function zrangebyscore(Redis &$connection, $query)
     {
-        $args = explode(" ", $query);
+        $args = ArrayTools::explodeStringInArray($query);
         $options = array();
         foreach ($args as $ind => $parameter) {
             if (strtolower($parameter) == "limit") {
@@ -530,7 +553,7 @@ class phpRedisQueryHandler
      */
     public static function zrevrangebyscore(Redis &$connection, $query)
     {
-        $args = explode(" ", $query);
+        $args = ArrayTools::explodeStringInArray($query);
         $options = array();
         foreach ($args as $ind => $parameter) {
             if (strtolower($parameter) == "limit") {
@@ -555,7 +578,7 @@ class phpRedisQueryHandler
      */
     public static function zrevrange(Redis &$connection, $query)
     {
-        $args = explode(" ", $query);
+        $args = ArrayTools::explodeStringInArray($query);
         $withscores = false;
         if (isset($args[3]) && ("withscores" == strtolower($args[3]))) {
             $withscores = true;
@@ -572,7 +595,7 @@ class phpRedisQueryHandler
      */
     public static function zinterzunionstore(Redis &$connection, $query)
     {
-        $args = explode(" ", $query);
+        $args = ArrayTools::explodeStringInArray($query);
         $destination = array_shift($args);
         $parameters = array(
             "keys" => array(),
@@ -640,7 +663,7 @@ class phpRedisQueryHandler
      */
     public static function zscan(Redis &$connection, $query)
     {
-        $args = explode(" ", $query);
+        $args = ArrayTools::explodeStringInArray($query);
         $parameters = array(
             "query" => null,
             "match" => false,
