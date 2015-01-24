@@ -272,7 +272,7 @@ class phpRedisQueryHandler
      */
     public static function migrate(Redis &$connection, $query)
     {
-        $args    = explode(" ", $query);
+        $args    = ArrayTools::explodeStringInArray($query);
         $copy    = false;
         $replace = false;
         foreach ($args as $ind => $parameter) {
@@ -294,9 +294,32 @@ class phpRedisQueryHandler
      * @return Bool
      * @date   2015-01-09T22:56:50+0100
      */
+    public static function hset(Redis &$connection, $query)
+    {
+        if (preg_match('/"([^"]+)"/', $query)) {
+            $args = ArrayTools::explodeComplexStringInArray($query);
+        } else {
+            $args = ArrayTools::explodeStringInArray($query);
+        }
+        return $connection->hSet($args[0], $args[1], $args[2]);
+    }
+
+    /**
+     * Fills in a whole hash.
+     * Non-string values are converted to string,
+     * using the standard `(string)` cast. NULL values are stored
+     * @param  Redis                    &$connection [description]
+     * @param  [type]                   $query       [description]
+     * @return Bool
+     * @date   2015-01-09T22:56:50+0100
+     */
     public static function hmset(Redis &$connection, $query)
     {
-        $args    = explode(" ", $query);
+        if (preg_match('/"([^"]+)"/', $query)) {
+            $args = ArrayTools::explodeComplexStringInArray($query);
+        } else {
+            $args = ArrayTools::explodeStringInArray($query);
+        }
         $key = array_shift($args);
         if ((count($args) % 2) !== 0) {
             throw new Exception("you must have a key for a value multiple");
@@ -318,7 +341,7 @@ class phpRedisQueryHandler
      */
     public static function hmget(Redis &$connection, $query)
     {
-        $args    = explode(" ", $query);
+        $args = ArrayTools::explodeStringInArray($query);
         $key = array_shift($args);
         return $connection->hmget($key, $args);
     }
