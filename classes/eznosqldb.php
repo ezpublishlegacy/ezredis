@@ -19,10 +19,9 @@ class eZNoSqlDB extends eZDB
     {
         $GLOBALS['eZNoSQLDBGlobalInstance'] = $instance;
     }
-    public static function instance($databaseImplementation = false, $databaseParameters = false, $forceNewInstance = false)
+    public static function instance($databaseImplementation = 'ezredis', $databaseParameters = false, $forceNewInstance = false)
     {
         $ini = eZINI::instance('redis.ini');
-        $databaseImplementation = "ezredis";
         list($server, $port, $user, $pwd, $usePersistentConnection) =
             $ini->variableMulti('DatabaseSettings', array( 'Server', 'Port', 'User', 'Password', 'UsePersistentConnection', ));
         $socketPath = false;
@@ -53,13 +52,11 @@ class eZNoSqlDB extends eZDB
             'use_persistent_connection' => $usePersistentConnection,
             'show_errors' => true
         );
-
         $optionArray = array( 'iniFile'       => 'redis.ini',
                               'iniSection'    => 'DatabaseSettings',
                               'iniVariable'   => 'ImplementationAlias',
                               'handlerIndex'  => $databaseImplementation,
                               'handlerParams' => array( $databaseParameters ) );
-
         $options = new ezpExtensionOptions($optionArray);
 
         $impl = eZExtension::getHandlerClass($options);
