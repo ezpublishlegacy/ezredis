@@ -14,6 +14,20 @@ $slow_iterations = isset($argv[3])? $argv[3]: 2500;
 $repeat = isset($argv[4])? $argv[4]: 3;
 $verbose = isset($argv[5])? true: false;
 
+$script = eZScript::instance(
+    array(
+        'description' => "Remove archived content object versions according to "
+            . "[VersionManagement/DefaultVersionHistoryLimit and "
+            . "[VersionManagement]/VersionHistoryClass settings",
+        'use-session' => false,
+        'use-modules' => true,
+        'use-extensions' => true
+    )
+);
+$script->startup();
+$sys = eZSys::instance();
+$script->initialize();
+
 $totalexecutiontime=0;
 
 $keyscommand="keys";
@@ -52,19 +66,6 @@ switch ($bench) {
 
         break;
     case "ezredis":
-        $script = eZScript::instance(
-            array(
-                'description' => "Remove archived content object versions according to "
-                    . "[VersionManagement/DefaultVersionHistoryLimit and "
-                    . "[VersionManagement]/VersionHistoryClass settings",
-                'use-session' => false,
-                'use-modules' => true,
-                'use-extensions' => true
-            )
-        );
-        $script->startup();
-        $sys = eZSys::instance();
-        $script->initialize();
         $db = eZNoSqlDB::instance();
         
         $mgetkeys =  array('1', 'foo');
@@ -168,3 +169,4 @@ for ($j = 1; $j <= $repeat; $j++) {
     }
 }
 echo sprintf("-- Bottom Line for $bench: Tests completed a in %f seconds in average, with %.2f mb memory usage\n", $totalexecutiontime/$j, memory_get_peak_usage(true)/1000000);
+$script->shutdown();
