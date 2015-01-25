@@ -288,19 +288,17 @@ class eZRedisDB extends eZDBInterface
                     // Reset the stack debug tree since the top commit was done
                     $this->TransactionStackTree = array();
                 }
-                if ($this->isConnected()) {
-                    // Check if we have encountered any problems, if so we have to rollback
-                    if (!$this->TransactionIsValid) {
-                        $oldRecordError = $this->RecordError;
-                        // Turn off error handling while we rollback
-                        $this->RecordError = false;
-                        $this->rollbackQuery();
-                        $this->RecordError = $oldRecordError;
+                // Check if we have encountered any problems, if so we have to rollback
+                if (!$this->TransactionIsValid) {
+                    $oldRecordError = $this->RecordError;
+                    // Turn off error handling while we rollback
+                    $this->RecordError = false;
+                    $this->rollbackQuery();
+                    $this->RecordError = $oldRecordError;
 
-                        return false;
-                    } else {
-                        return $this->commitQuery();
-                    }
+                    return false;
+                } else {
+                    return $this->commitQuery();
                 }
             } else {
                 if (is_array($this->TransactionStackTree)) {

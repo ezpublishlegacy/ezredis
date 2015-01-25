@@ -61,7 +61,7 @@ class phpRedisQueryHandler
         if (empty($additionnalParams)) {
             return $connection->set($args[0], $args[1]);
         } else {
-            return $connection->set($args[0], $args[1], $additionnalParams);
+            return $connection->set($args[0], html_entity_decode($args[1], ENT_QUOTES), $additionnalParams);
         }
     }
 
@@ -76,7 +76,7 @@ class phpRedisQueryHandler
     public static function setex(Redis &$connection, $query)
     {
         $args = ArrayTools::explodeStringInArray($query);
-        return $connection->setex($args[0], $args[1], $args[2]);
+        return $connection->setex($args[0], $args[1], html_entity_decode($args[2], ENT_QUOTES));
     }
 
     /**
@@ -92,7 +92,7 @@ class phpRedisQueryHandler
     public static function psetex(Redis &$connection, $query)
     {
         $args = ArrayTools::explodeStringInArray($query);
-        return $connection->psetex($args[0], $args[1], $args[2]);
+        return $connection->psetex($args[0], $args[1], html_entity_decode($args[2], ENT_QUOTES));
     }
 
     /**
@@ -233,7 +233,7 @@ class phpRedisQueryHandler
         }
         $parameter = array();
         for ($i=0; $i < count($args); $i+=2) {
-            $parameter[$args[$i]] = $args[$i+1];
+            $parameter[$args[$i]] = html_entity_decode($args[$i+1], ENT_QUOTES);
         }
         return $connection->mset($parameter);
     }
@@ -259,7 +259,7 @@ class phpRedisQueryHandler
         }
         $parameter = array();
         for ($i=0; $i < count($args); $i+=2) {
-            $parameter[$args[$i]] = $args[$i+1];
+            $parameter[$args[$i]] = html_entity_decode($args[$i+1], ENT_QUOTES);
         }
         return $connection->msetnx($parameter);
     }
@@ -301,7 +301,7 @@ class phpRedisQueryHandler
         } else {
             $args = ArrayTools::explodeStringInArray($query);
         }
-        return $connection->hSet($args[0], $args[1], $args[2]);
+        return $connection->hSet($args[0], $args[1], html_entity_decode($args[2], ENT_QUOTES));
     }
 
     /**
@@ -326,7 +326,7 @@ class phpRedisQueryHandler
         }
         $parameter = array();
         for ($i=0; $i < count($args); $i+=2) {
-            $parameter[$args[$i]] = $args[$i+1];
+            $parameter[$args[$i]] = html_entity_decode($args[$i+1], ENT_QUOTES);
         }
         return $connection->hmset($key, $parameter);
     }
