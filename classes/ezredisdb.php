@@ -338,4 +338,18 @@ class eZRedisDB extends eZDBInterface
         }
         return false;
     }
+
+    /**
+     * Like mysql_real_escape_string
+     * This function allow to escape simple and double quotes
+     *
+     * @param mixed $value
+     * @return mixed
+     * @date   2015-06-15T09:11:17+0100
+     */
+    public function escapeString($value)
+    {
+        $value = htmlentities($value, ENT_QUOTES);
+        return '"'.$value.'"';
+    }
 }

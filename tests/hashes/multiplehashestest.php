@@ -44,7 +44,7 @@ class MultipleHashesTest extends ezpTestCase
             )),
             json_encode($db->query('hmget myhash field3 field4 field5'))
         );
-        // case 1 : multiple case with complex string
+        // case 2 : multiple case with complex string with simple quote
         $db->query('hmset myhash field10 "hello work" field11 "lorem ipsum"');
         $this->assertequals(
             json_encode(array(
@@ -53,6 +53,43 @@ class MultipleHashesTest extends ezpTestCase
             )),
             json_encode($db->query('hmget myhash field10 field11'))
         );
+        // case 3 : multiple case with complex string with double quote
+        $db->query('hmset myhash field12 "hello work" field13 "lorem ipsum"');
+        $this->assertequals(
+            json_encode(array(
+                'field12' => "hello work",
+                'field13' => 'lorem ipsum'
+            )),
+            json_encode($db->query('hmget myhash field12 field13'))
+        );
+
+        // case 4 : multiple case with complex string and escapeString function
+        $fieldValue15 = $db->escapeString('hello work guys. What\'s up?');
+        $db->query("hmset myhash field15 $fieldValue15 field14 \"lorem ipsum\"");
+        $this->assertequals(
+            json_encode(array(
+                'field15' => 'hello work guys. What\'s up?',
+                'field14' => 'lorem ipsum'
+            )),
+            json_encode($db->query('hmget myhash field15 field14'))
+        );
+
+
+        // case 5 : multiple case with simple string with no quotes
+        $db->query('hmset myhash field16 hello field17 world field18 Lorem');
+        $this->assertEquals('hello', $db->query('hget myhash field16'));
+        $this->assertEquals('world', $db->query('hget myhash field17'));
+        $this->assertFalse($db->query('hget myhash nofield'));
+        $this->assertequals(
+            json_encode(array(
+                'field16' => 'hello',
+                'field17' => 'world',
+                'field18' => 'Lorem',
+                'nofield' => false
+            )),
+            json_encode($db->query('hmget myhash field16 field17 field18 nofield'))
+        );
+        $db->close();
     }
 
     public function testHDel()
@@ -70,5 +107,6 @@ class MultipleHashesTest extends ezpTestCase
             )),
             json_encode($db->query('hmget myhash field21 field22'))
         );
+        $db->close();
     }
 }

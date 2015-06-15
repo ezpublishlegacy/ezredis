@@ -35,6 +35,11 @@ class HashesTest extends ezpTestCase
         // case 4 : hget false variables
         $this->assertFalse($db->query("hget variable2 field2"));
         $this->assertFalse($db->query("hget variable field3"));
+
+        // case 5 : hget complex variables with quotes, html tag and espaceString function
+        $htmlTag = $db->escapeString("<div class=\"lorem_ipsum\">LOREM IPSUM</div>");
+        $db->query("hset variable field4 $htmlTag");
+        $this->assertEquals('<div class="lorem_ipsum">LOREM IPSUM</div>', $db->query("hget variable field4"));
         $db->close();
     }
 
