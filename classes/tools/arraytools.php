@@ -3,6 +3,7 @@
 class ArrayTools
 {
     /**
+     * retrieve all spaces and replace by one space
      * @param  string                   $query [description]
      * @date   2015-01-24T00:18:32+0100
      */
@@ -15,6 +16,7 @@ class ArrayTools
     /**
      * @param  string                   $query [description]
      * @date   2015-01-24T00:42:45+0100
+     * @todo  comments this part code
      */
     public static function explodeComplexStringInArray($query)
     {
@@ -34,7 +36,7 @@ class ArrayTools
                 if ($doubleQuote) {
                     $args[]       = str_replace('"', '', trim($stringConcat));
                     $doubleQuote  = false;
-                    // reinitialize varia
+                    // reinitialize variable
                     $stringConcat = "";
                 } else {
                     $doubleQuote = true;
