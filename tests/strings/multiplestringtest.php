@@ -35,6 +35,10 @@ class MultipleStringsTest extends ezpTestCase
         $db->query("mset mykey6 vendredi  mykey7 jeudi");
         $result = $db->query("mget mykey6 mykey7");
         $this->assertEquals(json_encode(array("vendredi", "jeudi")), json_encode($result));
+        //case 4
+        $db->query("mset mykey8 ".$db->escapeString('Lorem ipsum dolor sit amet')."  mykey9 ".$db->escapeString('Lorem ipsum dolor sit amet'));
+        $result = $db->query("mget mykey8 mykey9");
+        $this->assertEquals(json_encode(array("Lorem ipsum dolor sit amet", "Lorem ipsum dolor sit amet")), json_encode($result));
         $db->close();
     }
 
