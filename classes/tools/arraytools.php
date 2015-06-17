@@ -27,7 +27,7 @@ class ArrayTools
         $stringConcat = "";
         foreach ($subQuery as $key => $value) {
             $value = trim($value);
-            if (empty($value)) {
+            if (empty($value) && $value !== "0") {
                 continue;
             }
             if (preg_match('/"([^"]+)"/', $value)) {
