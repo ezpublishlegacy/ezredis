@@ -124,6 +124,7 @@ class eZRedisDB extends eZDBInterface
 
     public function query($sql, $server = false)
     {
+        eZDebug::writeNotice($sql, 'eZRedisDB');
         if (!$sql) {
             eZDebug::writeWarning('No Redis query', 'eZRedisDB');
             return false;
