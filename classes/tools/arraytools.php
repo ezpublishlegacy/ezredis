@@ -17,6 +17,7 @@ class ArrayTools
      * @param  string                   $query [description]
      * @date   2015-01-24T00:42:45+0100
      * @todo  comments this part code
+     * @thought It s a shit code.
      */
     public static function explodeComplexStringInArray($query)
     {
