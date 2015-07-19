@@ -9,7 +9,10 @@ changelog 0.2alpha :
 TODO :
 ======
 - add a library redis if they can not compile phpredis
-- 
+- bug : on hmget when there are difference in php between 
+	$redis->query("hexists 1226e8a8b35f050423dfb0f68bc0916c72464966 json")
+	$redis->query("hexists \"1226e8a8b35f050423dfb0f68bc0916c72464966\" json")
+		but redis dont have any difference
 
 
 Benchmark :
