@@ -9,25 +9,23 @@
 $db = eZNoSqlDB::instance();
 $db->selectDatabase(1);
 // Simple key -> value set
-$db->query('set voiture6 maison4 ex 100 xx');
+$db->query('set voiture18 maison86 ex 100');
 
-// Simple key -> value get
-$db = eZNoSqlDB::instance();
-$db->selectDatabase(1);
-$result = $db->arrayQuery('get voiture6');
-var_dump($result);
+// // Simple key -> value get
+$result = $db->arrayQuery('get voiture18');
+echo $result . "<br /> ";
 
-// Transaction Redis
+// // Transaction Redis
 $db->begin();
 $db->selectDatabase(3);
 $db->query('keys *');
 $db->query('sort myslist desc');
 $result = $db->commit();
 $db->close();
-var_dump($result);
+var_dump($result) . "<br />";
 
-echo "\r\n";
+echo "<pre><br />";
 eZDebug::printReport(false, false);
-echo "\r\n";
+echo "<br /><pre>";
 eZDB::checkTransactionCounter();
 eZExecution::cleanExit();
