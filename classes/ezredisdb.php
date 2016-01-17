@@ -109,7 +109,7 @@ class eZRedisDB extends eZDBInterface
         $this->IsConnected = true;
 
         if (!$connection) {
-            eZDebug::writeError("Connection error: Couldn't connect to database server. Please try again later or inform the system administrator.\n{$this->ErrorMessage}", __CLASS__);
+            eZDebug::writeError("Connection error: Couldn't connect to Redis database server. Please try again later or inform the system administrator.\n{$this->ErrorMessage}", __CLASS__);
             $this->IsConnected = false;
             throw new eZDBNoConnectionException($server, $this->ErrorMessage, $this->ErrorNumber);
         }
