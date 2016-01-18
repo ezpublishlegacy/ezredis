@@ -76,7 +76,7 @@ class phpRedisQueryHandler
     public static function setex(Redis &$connection, $query)
     {
         $args = ArrayTools::explodeStringInArray($query);
-        return $connection->setex($args[0], $args[1], html_entity_decode($args[2], ENT_QUOTES));
+        return $connection->setEx($args[0], $args[1], html_entity_decode($args[2], ENT_QUOTES));
     }
 
     /**
@@ -106,7 +106,7 @@ class phpRedisQueryHandler
     public static function mget(Redis &$connection, $query)
     {
         $args = ArrayTools::explodeStringInArray($query);
-        return $connection->mget($args);
+        return $connection->mGet($args);
     }
 
     /**
@@ -223,7 +223,7 @@ class phpRedisQueryHandler
     public static function mset(Redis &$connection, $query)
     {
         $args     = array();
-        if (preg_match('/"([^"]+)"/', $query)) {
+        if (preg_match("/\"(.+)\"/", $query)) {
             $args = ArrayTools::explodeComplexStringInArray($query);
         } else {
             $args = ArrayTools::explodeStringInArray($query);
@@ -235,7 +235,7 @@ class phpRedisQueryHandler
         for ($i=0; $i < count($args); $i+=2) {
             $parameter[$args[$i]] = html_entity_decode($args[$i+1], ENT_QUOTES);
         }
-        return $connection->mset($parameter);
+        return $connection->mSet($parameter);
     }
 
     /**
@@ -249,7 +249,7 @@ class phpRedisQueryHandler
     public static function msetnx(Redis &$connection, $query)
     {
         $args     = array();
-        if (preg_match('/"([^"]+)"/', $query)) {
+        if (preg_match("/\"(.+)\"/", $query)) {
             $args = ArrayTools::explodeComplexStringInArray($query);
         } else {
             $args = ArrayTools::explodeStringInArray($query);
@@ -261,7 +261,7 @@ class phpRedisQueryHandler
         for ($i=0; $i < count($args); $i+=2) {
             $parameter[$args[$i]] = html_entity_decode($args[$i+1], ENT_QUOTES);
         }
-        return $connection->msetnx($parameter);
+        return $connection->mSetNx($parameter);
     }
 
     /**
@@ -296,7 +296,7 @@ class phpRedisQueryHandler
      */
     public static function hset(Redis &$connection, $query)
     {
-        if (preg_match('/"([^"]+)"/', $query)) {
+        if (preg_match("/\"(.+)\"/", $query)) {
             $args = ArrayTools::explodeComplexStringInArray($query);
         } else {
             $args = ArrayTools::explodeStringInArray($query);
@@ -315,7 +315,7 @@ class phpRedisQueryHandler
      */
     public static function hmset(Redis &$connection, $query)
     {
-        if (preg_match('/"([^"]+)"/', $query)) {
+        if (preg_match("/\"(.+)\"/", $query)) {
             $args = ArrayTools::explodeComplexStringInArray($query);
         } else {
             $args = ArrayTools::explodeStringInArray($query);
@@ -328,7 +328,7 @@ class phpRedisQueryHandler
         for ($i=0; $i < count($args); $i+=2) {
             $parameter[$args[$i]] = html_entity_decode($args[$i+1], ENT_QUOTES);
         }
-        return $connection->hmset($key, $parameter);
+        return $connection->hMSet($key, $parameter);
     }
 
     /**
@@ -343,7 +343,7 @@ class phpRedisQueryHandler
     {
         $args = ArrayTools::explodeStringInArray($query);
         $key = array_shift($args);
-        return $connection->hmget($key, $args);
+        return $connection->hMGet($key, $args);
     }
 
     /**
@@ -384,7 +384,7 @@ class phpRedisQueryHandler
                 $parameters["count"] = $args[$ind+1];
             }
         }
-        return $connection->hscan($key, $parameters['query'], $parameters['match'], $parameters['count']);
+        return $connection->hScan($key, $parameters['query'], $parameters['match'], $parameters['count']);
     }
 
     /**
@@ -411,7 +411,7 @@ class phpRedisQueryHandler
                 throw new Exception("Need 4 parameters");
                 break;
         }
-        return $connection->linsert($args[0], $position, $args[2], $args[3]);
+        return $connection->lInsert($args[0], $position, $args[2], $args[3]);
     }
 
     /**
@@ -456,7 +456,7 @@ class phpRedisQueryHandler
                 $parameters["count"] = $args[$ind+1];
             }
         }
-        return $connection->sscan($key, $parameters['query'], $parameters['match'], $parameters['count']);
+        return $connection->sScan($key, $parameters['query'], $parameters['match'], $parameters['count']);
     }
 
     /**
@@ -513,7 +513,7 @@ class phpRedisQueryHandler
                 $parameters["keys"][] = $args[$ind];
             }
         }
-        return $connection->zinter(
+        return $connection->zInter(
             $destination,
             $parameters['keys'],
             $parameters['weight'],
@@ -536,7 +536,7 @@ class phpRedisQueryHandler
         if (isset($args[3]) && ("withscores" == strtolower($args[3]))) {
             $withscores = true;
         }
-        return $connection->zrange($args[0], $args[1], $args[2], $withscores);
+        return $connection->zRange($args[0], $args[1], $args[2], $withscores);
     }
 
     /**
@@ -560,7 +560,7 @@ class phpRedisQueryHandler
                 $options['withscores'] = true;
             }
         }
-        return $connection->zrangebyscore($args[0], $args[1], $args[2], $options);
+        return $connection->zRangeByScore($args[0], $args[1], $args[2], $options);
     }
 
     /**
@@ -585,7 +585,7 @@ class phpRedisQueryHandler
                 $options['withscores'] = true;
             }
         }
-        return $connection->zrangebyscore($args[0], $args[1], $args[2], $options);
+        return $connection->zRevRangeByScore($args[0], $args[1], $args[2], $options);
     }
 
     /**
@@ -606,7 +606,7 @@ class phpRedisQueryHandler
         if (isset($args[3]) && ("withscores" == strtolower($args[3]))) {
             $withscores = true;
         }
-        return $connection->zrevrange($args[0], $args[1], $args[2], $withscores);
+        return $connection->zRevRange($args[0], $args[1], $args[2], $withscores);
     }
 
     /**
@@ -661,7 +661,7 @@ class phpRedisQueryHandler
                 $parameters["keys"][] = $args[$ind];
             }
         }
-        return $connection->zunionstore(
+        return $connection->zUnionStore(
             $destination,
             $parameters['keys'],
             $parameters['weight'],
@@ -700,7 +700,7 @@ class phpRedisQueryHandler
                 $parameters["count"] = $args[$ind+1];
             }
         }
-        return $connection->zscan($key, $parameters['query'], $parameters['match'], $parameters['count']);
+        return $connection->zScan($key, $parameters['query'], $parameters['match'], $parameters['count']);
     }
 
     /**
