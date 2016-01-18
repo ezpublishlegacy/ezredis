@@ -154,6 +154,7 @@ class eZRedisDB extends eZDBInterface
         if ($this->OutputSQL) {
             $this->endTimer();
         }
+        $result = $this->unescapeString($result);
         eZDebug::accumulatorStop('redis_query');
         return $result;
     }
@@ -209,6 +210,7 @@ class eZRedisDB extends eZDBInterface
             }
             $result = $this->query($sql, $server);
         }
+        $result = $this->unescapeString($result);
         return $result;
     }
 
@@ -350,7 +352,33 @@ class eZRedisDB extends eZDBInterface
      */
     public function escapeString($value)
     {
+        if (is_array($value)) {
+            $value = serialize($value);
+        }
         $value = htmlentities($value, ENT_QUOTES);
         return '"'.$value.'"';
+    }
+
+    public function unescapeString($value)
+    {
+        if (is_array($value)) {
+            $result = array();
+            foreach ($value as $field => $row) {
+                $rowSerialize = @unserialize($row);
+                if ($rowSerialize !== false) {
+                    $row = $rowSerialize;
+                }
+                $result[$field] = $row;
+            }
+            return $result;
+        }
+        if (!empty($value) && !is_bool($value)) {
+            $value = html_entity_decode($value, ENT_QUOTES);
+            $valueSerialize = @unserialize($value);
+            if ($valueSerialize !== false) {
+                $value = $valueSerialize;
+            }
+        }
+        return $value;
     }
 }

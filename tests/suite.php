@@ -20,4 +20,10 @@ class eZRedisSuite extends ezpTestSuite
     {
         return new self();
     }
+
+    public function setUp()
+    {
+        eZDir::recursiveDelete(eZINI::instance()->variable('FileSettings', 'VarDir'));
+        eZContentLanguage::expireCache();
+    }
 }
