@@ -5,12 +5,10 @@
  * example :
  * phpunit --colors --debug extension/ezredis/tests/strings/multiplestringtest.php
  */
-require_once 'autoload.php';
-class MultipleStringsTest extends ezpTestCase
+class MultipleSetTest extends ezpTestCase
 {
     public function testFlushDB()
     {
-        eZExtension::activateExtensions('default');
         $db = eZNoSqlDB::instance();
         $db->query("select 5");
         $db->query("flushdb");
@@ -20,7 +18,6 @@ class MultipleStringsTest extends ezpTestCase
 
     public function testMSet()
     {
-        eZExtension::activateExtensions('default');
         $db = eZNoSqlDB::instance();
         $db->query("select 5");
         //case 1
@@ -44,7 +41,6 @@ class MultipleStringsTest extends ezpTestCase
 
     public function testMSetNX()
     {
-        eZExtension::activateExtensions('default');
         $db = eZNoSqlDB::instance();
         $db->query("select 5");
         //case 1 : mutilpe insert
@@ -66,7 +62,6 @@ class MultipleStringsTest extends ezpTestCase
 
     public function testDel()
     {
-        eZExtension::activateExtensions('default');
         $db = eZNoSqlDB::instance();
         $db->query("select 5");
         //case 1 : multiple insert with mutiple delete
