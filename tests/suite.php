@@ -11,7 +11,7 @@ class eZRedisSuite extends ezpTestSuite
         parent::__construct();
         $this->setName("eZ Publish Redis Test Suite");
 
-        $this->addTestSuite('eZRedisStringSuite');
+        $this->addTestSuite('eZRedisSetSuite');
         $this->addTestSuite('eZRedisHashesSuite');
         $this->addTestSuite('eZRedisConnectionsSuite');
     }
