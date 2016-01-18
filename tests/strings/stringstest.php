@@ -5,7 +5,6 @@
  * example :
  * phpunit --colors --debug extension/ezredis/tests/strings/stringtest.php
  */
-require_once 'autoload.php';
 class StringsTest extends ezpTestCase
 {
     public function testFlushDB()

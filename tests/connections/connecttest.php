@@ -3,7 +3,6 @@
  * @author Dany RALANTONISAINANA <lendormi1984@gmail.com>
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2 (or any later version)
  */
-require_once 'autoload.php';
 class ConnectTest extends ezpTestCase
 {
     public function testConstructorOpenconnection()
