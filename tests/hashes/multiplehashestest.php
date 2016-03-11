@@ -89,6 +89,28 @@ class MultipleHashesTest extends ezpTestCase
             )),
             json_encode($db->query('hmget myhash field16 field17 field18 nofield'))
         );
+
+        // case 6 : multiple case with array and complex string and escapeString function
+        $fieldValue15 = $db->escapeString(array(
+            'field20' => 'hello',
+            'field21' => 'world',
+            'field22' => 'Lorem',
+            'nofield' => false
+        ));
+        $db->query("hmset myhash field30 $fieldValue15 field31 \"lorem ipsum\"");
+
+        $this->assertequals(
+            json_encode(array(
+                'field30' => array(
+                    'field20' => 'hello',
+                    'field21' => 'world',
+                    'field22' => 'Lorem',
+                    'nofield' => false
+                ),
+                'field31' => 'lorem ipsum'
+            )),
+            json_encode($db->query('hmget myhash field30 field31'))
+        );
         $db->close();
     }
 

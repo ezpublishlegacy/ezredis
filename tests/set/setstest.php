@@ -5,12 +5,10 @@
  * example :
  * phpunit --colors --debug extension/ezredis/tests/strings/stringtest.php
  */
-require_once 'autoload.php';
-class StringsTest extends ezpTestCase
+class SetTest extends ezpTestCase
 {
     public function testFlushDB()
     {
-        eZExtension::activateExtensions('default');
         $db = eZNoSqlDB::instance();
         $db->query("select 5");
         $db->query("flushdb");
@@ -20,7 +18,6 @@ class StringsTest extends ezpTestCase
 
     public function testSet()
     {
-        eZExtension::activateExtensions('default');
         $db = eZNoSqlDB::instance();
         $db->query("select 5");
         $db->query("set foo bar");
@@ -32,9 +29,18 @@ class StringsTest extends ezpTestCase
         $db->close();
     }
 
+    public function testSetArray()
+    {
+        $db = eZNoSqlDB::instance();
+        $db->query("select 5");
+        $valueArray = array("hello", "world");
+        $db->query("set mykey3 " . $db->escapeString($valueArray));
+        $this->assertEquals($valueArray, $db->query("get mykey3"));
+        $db->close();
+    }
+
     public function testDidntSet()
     {
-        eZExtension::activateExtensions('default');
         $db = eZNoSqlDB::instance();
         $db->query("select 5");
         $this->assertFalse($db->query("get foodidntset"));
@@ -43,7 +49,6 @@ class StringsTest extends ezpTestCase
 
     public function testExist()
     {
-        eZExtension::activateExtensions('default');
         $db = eZNoSqlDB::instance();
         $db->query("select 5");
         $db->query("set foo2 bar2");
@@ -53,7 +58,6 @@ class StringsTest extends ezpTestCase
 
     public function testDidntExist()
     {
-        eZExtension::activateExtensions('default');
         $db = eZNoSqlDB::instance();
         $db->query("select 5");
         $db->query("set foo3 bar3");
@@ -63,7 +67,6 @@ class StringsTest extends ezpTestCase
 
     public function testDel()
     {
-        eZExtension::activateExtensions('default');
         $db = eZNoSqlDB::instance();
         $db->query("select 5");
         //case 1 : one insert with one delete
